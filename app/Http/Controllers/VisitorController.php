@@ -34,6 +34,21 @@ class VisitorController extends Controller
             ->selectRaw("$column as label, count(*) as total")->groupBy($column)->orderByDesc('total')->limit($limit)->get()
             ->map(fn ($r) => ['label' => $r->label, 'total' => (int) $r->total])->values();
 
+        // Per tagged link: hits, devices, and how many of those devices looked at more than one page that day.
+        $campaigns = (clone $period)->whereNotNull('campaign')->get(['campaign', 'visitor', 'visited_at'])
+            ->groupBy('campaign')->map(function ($rows, $name) use ($period) {
+                $visitors = $rows->pluck('visitor')->unique();
+                $pages = (clone $period)->whereIn('visitor', $visitors)->selectRaw('visitor, count(*) as n')->groupBy('visitor')->pluck('n');
+
+                return [
+                    'label' => $name,
+                    'visits' => $rows->count(),
+                    'visitors' => $visitors->count(),
+                    'browsed' => $pages->filter(fn ($n) => $n > 1)->count(),
+                    'last' => $rows->max('visited_at')->format('Y-m-d H:i'),
+                ];
+            })->sortByDesc('last')->values();
+
         return response()->json([
             'days' => $days,
             'tracking' => (bool) config('visitors.enabled'),
@@ -50,12 +65,14 @@ class VisitorController extends Controller
             'series' => $series,
             'pages' => $top('path'),
             'referrers' => $top('referrer_host'),
+            'campaigns' => $campaigns,
             'devices' => $top('device', 3),
             'recent' => PageVisit::latest('visited_at')->latest('id')->limit(15)->get()->map(fn (PageVisit $v) => [
                 'at' => $v->visited_at->format('Y-m-d H:i'),
                 'path' => $v->path,
                 'device' => $v->device,
                 'referrer' => $v->referrer_host,
+                'campaign' => $v->campaign,
                 'visitor' => substr($v->visitor, 0, 6),
                 'locale' => $v->locale,
             ]),

@@ -347,13 +347,21 @@
         "page": "Page",
         "device": "Device",
         "from": "Via",
-        "visitor": "Visitor"
+        "visitor": "Visitor",
+        "campaign": "Tag",
+        "hits": "Hits",
+        "devices": "Devices",
+        "browsed": "Browsed on",
+        "last": "Last"
       },
       "yourIp": "Your IP address is {ip}.",
       "ignored": "Visits from this address are not counted.",
       "notIgnored": "Visits from this address ARE counted. Put it in .env under VISITOR_IGNORED_IPS and clear the config cache to exclude your own visits.",
       "off": "Counting visits is switched off (VISITORS_ENABLED=false).",
-      "retention": "Visits are kept for {n} days."
+      "retention": "Visits are kept for {n} days.",
+      "campaigns": "Campaigns (tagged links)",
+      "campaignsHint": "Link with ?visits=company. “Browsed on” = devices that viewed more than one page: usually real people, not mail scanners.",
+      "noCampaigns": "No tagged visits yet. Use for example https://rentacar.arsus.it/?visits=company"
     }
   },
   "weekdays": [

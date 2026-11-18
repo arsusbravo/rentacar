@@ -142,6 +142,22 @@ class VisitorTrackingTest extends TestCase
         $this->assertSame(5, $this->getJson('/admin/api/visitors?days=90')->json('totals.visits'));
     }
 
+    public function test_a_tagged_link_is_stored_as_a_clean_campaign(): void
+    {
+        $this->visit('/?visits=Acme Rent%20B.V.!');
+        $this->visit('/?visits[]=x');
+        $this->visit('/');
+        $this->visit('/vehicles');
+
+        $this->assertSame(['acme-rent-b-v', null, null, null], PageVisit::orderBy('id')->pluck('campaign')->all());
+
+        $this->actingAs($this->owner());
+        $json = $this->getJson('/admin/api/visitors')->assertOk()->json('campaigns');
+        $this->assertSame('acme-rent-b-v', $json[0]['label']);
+        $this->assertSame(1, $json[0]['visits']);
+        $this->assertSame(1, $json[0]['browsed']); // same device went on to other pages
+    }
+
     public function test_the_owners_address_without_the_admin_role_is_no_owner(): void
     {
         $this->actingAs(User::factory()->employee()->create(['email' => config('admin.hidden_emails')[0]]));

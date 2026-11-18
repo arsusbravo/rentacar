@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Prunable;
 
-#[Fillable(['visited_at', 'visitor', 'path', 'referrer_host', 'device', 'locale'])]
+#[Fillable(['visited_at', 'visitor', 'path', 'referrer_host', 'campaign', 'device', 'locale'])]
 class PageVisit extends Model
 {
     use Prunable;

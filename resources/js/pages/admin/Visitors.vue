@@ -122,6 +122,29 @@ const share = (list, total) => (total ? Math.round((total / Math.max(1, ...list.
             </div>
         </div>
 
+        <!-- Tagged links (?visits=name) -->
+        <section class="mt-6 rounded-xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
+            <h2 class="font-medium">{{ t('admin.visitors.campaigns') }}</h2>
+            <p class="mt-1 text-xs text-slate-400">{{ t('admin.visitors.campaignsHint') }}</p>
+            <p v-if="!data.campaigns.length" class="mt-4 text-sm text-slate-400">{{ t('admin.visitors.noCampaigns') }}</p>
+            <div v-else class="mt-3 overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead class="text-xs uppercase tracking-wide text-slate-500">
+                        <tr><th class="py-2 pr-4 font-medium">{{ t('admin.visitors.cols.campaign') }}</th><th class="py-2 pr-4 font-medium">{{ t('admin.visitors.cols.hits') }}</th><th class="py-2 pr-4 font-medium">{{ t('admin.visitors.cols.devices') }}</th><th class="py-2 pr-4 font-medium">{{ t('admin.visitors.cols.browsed') }}</th><th class="py-2 font-medium">{{ t('admin.visitors.cols.last') }}</th></tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr v-for="c in data.campaigns" :key="c.label">
+                            <td class="py-2 pr-4 font-medium">{{ c.label }}</td>
+                            <td class="py-2 pr-4 tabular-nums">{{ c.visits }}</td>
+                            <td class="py-2 pr-4 tabular-nums">{{ c.visitors }}</td>
+                            <td class="py-2 pr-4 tabular-nums"><span :class="c.browsed ? 'font-semibold text-emerald-700' : 'text-slate-400'">{{ c.browsed }}</span></td>
+                            <td class="whitespace-nowrap py-2 text-slate-500">{{ time(c.last) }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
         <!-- Latest -->
         <section class="mt-6 rounded-xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
             <h2 class="font-medium">{{ t('admin.visitors.recent') }}</h2>
@@ -136,7 +159,7 @@ const share = (list, total) => (total ? Math.round((total / Math.max(1, ...list.
                             <td class="whitespace-nowrap py-2 pr-4 text-slate-500">{{ time(v.at) }}</td>
                             <td class="py-2 pr-4 font-mono text-xs">{{ v.path }}</td>
                             <td class="py-2 pr-4">{{ t('admin.visitors.device.' + v.device) }}</td>
-                            <td class="py-2 pr-4 text-slate-500">{{ v.referrer ?? t('admin.visitors.direct') }}</td>
+                            <td class="py-2 pr-4 text-slate-500">{{ v.campaign ? `✉ ${v.campaign}` : (v.referrer ?? t('admin.visitors.direct')) }}</td>
                             <td class="py-2 font-mono text-xs text-slate-400">#{{ v.visitor }}</td>
                         </tr>
                     </tbody>

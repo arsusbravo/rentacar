@@ -1,0 +1,1 @@
+/* empty css            */import{s as e,t}from"./i18n-DOCvYzDo.js";import{t as n}from"./RentalDetailsForm-Cx4oIlMO.js";var r=document.getElementById(`home-search`);e(n,{branches:JSON.parse(r.dataset.branches),categories:JSON.parse(r.dataset.categories),compact:!0,redirectTo:r.dataset.vehiclesUrl}).use(t).mount(r);
