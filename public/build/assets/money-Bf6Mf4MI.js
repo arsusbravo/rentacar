@@ -1,0 +1,1 @@
+function e(e,t){return new Intl.NumberFormat(t===`nl`?`nl-NL`:`en-GB`,{style:`currency`,currency:`EUR`}).format(e)}var t=(t,n)=>e(t/100,n);export{e as n,t};
