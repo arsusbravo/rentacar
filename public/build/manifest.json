@@ -57,7 +57,7 @@
     "name": "money"
   },
   "resources/css/app.css": {
-    "file": "assets/app-DoWQsj6K.css",
+    "file": "assets/app-Dq3KtSBA.css",
     "name": "app",
     "names": [
       "app.css"
@@ -66,7 +66,7 @@
     "isEntry": true
   },
   "resources/js/admin.js": {
-    "file": "assets/admin-BJX3JUCZ.js",
+    "file": "assets/admin-B-hOtMBY.js",
     "name": "admin",
     "src": "resources/js/admin.js",
     "isEntry": true,
@@ -86,11 +86,11 @@
       "resources/js/pages/admin/Branches.vue"
     ],
     "css": [
-      "assets/app-DoWQsj6K.css"
+      "assets/app-Dq3KtSBA.css"
     ]
   },
   "resources/js/checkout.js": {
-    "file": "assets/checkout-l_yUOu12.js",
+    "file": "assets/checkout-DuI4iyMG.js",
     "name": "checkout",
     "src": "resources/js/checkout.js",
     "isEntry": true,
@@ -100,11 +100,11 @@
       "_RentalDetailsForm-Cxxe9VEk.js"
     ],
     "css": [
-      "assets/app-DoWQsj6K.css"
+      "assets/app-Dq3KtSBA.css"
     ]
   },
   "resources/js/home.js": {
-    "file": "assets/home-TfikKMZV.js",
+    "file": "assets/home-BhAvA-UG.js",
     "name": "home",
     "src": "resources/js/home.js",
     "isEntry": true,
@@ -113,11 +113,11 @@
       "_RentalDetailsForm-Cxxe9VEk.js"
     ],
     "css": [
-      "assets/app-DoWQsj6K.css"
+      "assets/app-Dq3KtSBA.css"
     ]
   },
   "resources/js/pages/admin/Bookings.vue": {
-    "file": "assets/Bookings-BKV0TxXx.js",
+    "file": "assets/Bookings-C2zaddBb.js",
     "name": "Bookings",
     "src": "resources/js/pages/admin/Bookings.vue",
     "isDynamicEntry": true,
@@ -156,7 +156,7 @@
     ]
   },
   "resources/js/pages/admin/Customers.vue": {
-    "file": "assets/Customers-5eC2u7WL.js",
+    "file": "assets/Customers-DY6Qy-la.js",
     "name": "Customers",
     "src": "resources/js/pages/admin/Customers.vue",
     "isDynamicEntry": true,
@@ -206,7 +206,7 @@
     ]
   },
   "resources/js/pages/admin/Users.vue": {
-    "file": "assets/Users-cnQNaAF7.js",
+    "file": "assets/Users-B3bb9fAS.js",
     "name": "Users",
     "src": "resources/js/pages/admin/Users.vue",
     "isDynamicEntry": true,
@@ -216,7 +216,7 @@
     ]
   },
   "resources/js/vehicles.js": {
-    "file": "assets/vehicles-CfKP8Fxq.js",
+    "file": "assets/vehicles-DSOpbRqV.js",
     "name": "vehicles",
     "src": "resources/js/vehicles.js",
     "isEntry": true,
@@ -225,7 +225,7 @@
       "_RentalDetailsForm-Cxxe9VEk.js"
     ],
     "css": [
-      "assets/app-DoWQsj6K.css"
+      "assets/app-Dq3KtSBA.css"
     ]
   }
 }
