@@ -23,11 +23,12 @@ const allNav = [
     { key: 'customers', to: '/admin/customers' },
     { key: 'locations', to: '/admin/locations' },
     { key: 'users', to: '/admin/users', adminOnly: true },
+    { key: 'visitors', to: '/admin/visitors', ownerOnly: true },
     { key: 'settings', soon: true },
     { key: 'profile', to: '/admin/profile' },
 ];
 // users are managed by admins only
-const nav = computed(() => allNav.filter((i) => !i.adminOnly || me.value?.is_admin));
+const nav = computed(() => allNav.filter((i) => (!i.adminOnly || me.value?.is_admin) && (!i.ownerOnly || me.value?.is_owner)));
 </script>
 
 <template>

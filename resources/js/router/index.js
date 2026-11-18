@@ -14,6 +14,7 @@ const routes = [
             { path: 'bookings', name: 'admin.bookings', component: () => import('../pages/admin/Bookings.vue') },
             { path: 'customers', name: 'admin.customers', component: () => import('../pages/admin/Customers.vue') },
             { path: 'users', name: 'admin.users', component: () => import('../pages/admin/Users.vue') },
+            { path: 'visitors', name: 'admin.visitors', component: () => import('../pages/admin/Visitors.vue') },
             { path: 'profile', name: 'admin.profile', component: () => import('../pages/admin/Profile.vue') },
             { path: 'locations', name: 'admin.branches', component: () => import('../pages/admin/Branches.vue') },
             { path: ':pathMatch(.*)*', redirect: { name: 'admin.dashboard' } },

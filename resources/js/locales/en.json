@@ -24,6 +24,7 @@
       "extras": "Extra options",
       "prices": "Prices",
       "users": "Users",
+      "visitors": "Visitors",
       "profile": "My profile"
     },
     "dashboard": {
@@ -318,6 +319,41 @@
       "hint": "At least {n} characters and different from your current password.",
       "change": "Change password",
       "changed": "Your password has been changed."
+    },
+    "visitors": {
+      "title": "Visitors",
+      "intro": "Only visible to you as the owner. Visits to the public website. Anonymous: no IP address or cookie is stored, only page, time, device and origin. Visits by you, logged-in staff and robots are not counted.",
+      "period": "Period",
+      "days": "Last {n} days",
+      "today": "Today",
+      "visits": "Page views",
+      "visitors": "Visitors",
+      "visitorsHint": "A visitor is counted once per day.",
+      "chart": "Visitors per day",
+      "pages": "Popular pages",
+      "referrers": "Origin",
+      "devices": "Devices",
+      "recent": "Latest visits",
+      "none": "No visits yet.",
+      "noReferrers": "No referrals.",
+      "direct": "direct",
+      "device": {
+        "desktop": "Computer",
+        "mobile": "Phone",
+        "tablet": "Tablet"
+      },
+      "cols": {
+        "time": "Time",
+        "page": "Page",
+        "device": "Device",
+        "from": "Via",
+        "visitor": "Visitor"
+      },
+      "yourIp": "Your IP address is {ip}.",
+      "ignored": "Visits from this address are not counted.",
+      "notIgnored": "Visits from this address ARE counted. Put it in .env under VISITOR_IGNORED_IPS and clear the config cache to exclude your own visits.",
+      "off": "Counting visits is switched off (VISITORS_ENABLED=false).",
+      "retention": "Visits are kept for {n} days."
     }
   },
   "weekdays": [

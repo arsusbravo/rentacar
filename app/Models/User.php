@@ -50,6 +50,12 @@ class User extends Authenticatable
         return $this->hasRole(Role::Admin);
     }
 
+    /** The owner: an admin whose address is one of the hidden accounts (config admin.hidden_emails). Sees the visitor statistics. */
+    public function isOwner(): bool
+    {
+        return $this->isAdmin() && in_array(strtolower($this->email), array_map('strtolower', config('admin.hidden_emails', [])), true);
+    }
+
     public function isEmployee(): bool
     {
         return $this->hasRole(Role::Employee);

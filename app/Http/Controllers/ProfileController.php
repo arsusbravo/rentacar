@@ -39,6 +39,6 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
-        return ['id' => $user->id, 'name' => $user->name, 'email' => $user->email, 'role' => $user->role->value, 'is_admin' => $user->isAdmin(), 'min_password_length' => (int) config('admin.min_password_length')];
+        return ['id' => $user->id, 'name' => $user->name, 'email' => $user->email, 'role' => $user->role->value, 'is_admin' => $user->isAdmin(), 'is_owner' => $user->isOwner(), 'min_password_length' => (int) config('admin.min_password_length')];
     }
 }

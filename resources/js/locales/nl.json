@@ -24,6 +24,7 @@
       "extras": "Extra opties",
       "prices": "Prijzen",
       "users": "Gebruikers",
+      "visitors": "Bezoekers",
       "profile": "Mijn profiel"
     },
     "dashboard": {
@@ -318,6 +319,41 @@
       "hint": "Minimaal {n} tekens en anders dan je huidige wachtwoord.",
       "change": "Wachtwoord wijzigen",
       "changed": "Je wachtwoord is gewijzigd."
+    },
+    "visitors": {
+      "title": "Bezoekers",
+      "intro": "Alleen zichtbaar voor jou als eigenaar. Bezoeken aan de openbare website. Anoniem: er wordt geen IP-adres of cookie bewaard, alleen pagina, tijd, apparaat en herkomst. Bezoeken van jou, ingelogde medewerkers en robots tellen niet mee.",
+      "period": "Periode",
+      "days": "Laatste {n} dagen",
+      "today": "Vandaag",
+      "visits": "Paginaweergaven",
+      "visitors": "Bezoekers",
+      "visitorsHint": "Een bezoeker telt één keer per dag.",
+      "chart": "Bezoekers per dag",
+      "pages": "Populaire pagina's",
+      "referrers": "Herkomst",
+      "devices": "Apparaten",
+      "recent": "Laatste bezoeken",
+      "none": "Nog geen bezoeken.",
+      "noReferrers": "Geen verwijzingen.",
+      "direct": "direct",
+      "device": {
+        "desktop": "Computer",
+        "mobile": "Telefoon",
+        "tablet": "Tablet"
+      },
+      "cols": {
+        "time": "Tijd",
+        "page": "Pagina",
+        "device": "Apparaat",
+        "from": "Via",
+        "visitor": "Bezoeker"
+      },
+      "yourIp": "Jouw IP-adres is {ip}.",
+      "ignored": "Bezoeken vanaf dit adres worden niet geteld.",
+      "notIgnored": "Bezoeken vanaf dit adres worden wél geteld. Zet het in .env bij VISITOR_IGNORED_IPS en leeg daarna de config-cache om je eigen bezoeken uit te sluiten.",
+      "off": "Het tellen van bezoeken staat uit (VISITORS_ENABLED=false).",
+      "retention": "Bezoeken worden {n} dagen bewaard."
     }
   },
   "weekdays": [

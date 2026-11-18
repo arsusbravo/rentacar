@@ -12,6 +12,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RateController;
 use App\Http\Controllers\RentalPeriodController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VisitorController;
 use App\Http\Controllers\VehicleCategoryController;
 use App\Http\Controllers\VehicleClassController;
 use App\Http\Middleware\EnsureUserIsStaff;
@@ -55,6 +56,7 @@ Route::middleware(['auth', EnsureUserIsStaff::class])->group(function () {
         Route::post('bookings/{booking}/confirm', [BookingController::class, 'confirm']);
         Route::post('bookings/{booking}/cancel', [BookingController::class, 'cancel']);
         Route::apiResource('customers', CustomerController::class)->except('show');
+        Route::get('visitors', [VisitorController::class, 'index']);
         Route::get('rates', [RateController::class, 'index']);
         Route::put('classes/{class}/rates', [RateController::class, 'update']);
     });

@@ -14,7 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // The 'locale' cookie is set from JS by the language switcher.
         $middleware->encryptCookies(except: ['locale']);
-        $middleware->web(append: [\App\Http\Middleware\SetLocale::class]);
+        $middleware->web(append: [\App\Http\Middleware\SetLocale::class, \App\Http\Middleware\TrackVisit::class]);
+        // Behind a web server proxy (Plesk): take the visitor's IP address and https from the forwarded headers.
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
