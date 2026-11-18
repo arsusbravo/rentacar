@@ -20,6 +20,7 @@ const props = defineProps({
 });
 
 const { t, locale } = useI18n();
+const detailsForm = ref(null); // the rental details form
 const period = ref(null); // the accepted pick-up/return (null until the form validated)
 const choiceMissing = ref(false);
 
@@ -140,6 +141,14 @@ const booking = ref(false);
 const order = ref(null);         // the order shown in the demo modal
 const clientKeys = Object.keys(client.value);
 
+// "Book" first needs the rental details to be complete: the form opens and shows what is missing.
+function detailsComplete() {
+    if (detailsForm.value?.check()) return true;
+    fieldErrors.value = {};
+    bookingMessages.value = [t('checkout.incompleteBook')];
+    return false;
+}
+
 async function book() {
     fieldErrors.value = {};
     bookingMessages.value = [];
@@ -204,7 +213,7 @@ const specs = computed(() => {
 
     <div class="mt-6 grid items-start gap-6 max-lg:pb-20 lg:grid-cols-[1fr_22rem]">
         <div class="space-y-6">
-            <RentalDetailsForm :branches="branches" :initial="initial" update auto-submit collapsible @validated="onValidated" @changed="onChanged" />
+            <RentalDetailsForm ref="detailsForm" :branches="branches" :initial="initial" update auto-submit collapsible @validated="onValidated" @changed="onChanged" />
 
             <!-- Fuel, transmission, kilometres and own risk: one compact card, a row each -->
             <section class="rounded-xl bg-white px-5 py-2 shadow-sm ring-1 ring-slate-200" aria-labelledby="build-title">
@@ -274,7 +283,7 @@ const specs = computed(() => {
             </section>
 
             <ExtrasPicker v-model="selectedExtras" :extras="extras" />
-            <ClientForm v-model="client" :server-errors="fieldErrors" :messages="bookingMessages" :min-age="minAge" :pickup-date="period ? period.pickupAt.slice(0, 10) : null" :busy="booking" @book="book" />
+            <ClientForm v-model="client" :server-errors="fieldErrors" :messages="bookingMessages" :min-age="minAge" :pickup-date="period ? period.pickupAt.slice(0, 10) : null" :busy="booking" :before-book="detailsComplete" @book="book" />
         </div>
 
         <!-- Right: the vehicle and the prices only -->

@@ -11,6 +11,7 @@ const props = defineProps({
     minAge: { type: Number, default: 18 },
     pickupDate: { type: String, default: null },         // 'yyyy-MM-dd', the date the minimum age is checked on
     busy: { type: Boolean, default: false },
+    beforeBook: { type: Function, default: null },       // called first; returning false stops the booking
 });
 const emit = defineEmits(['update:modelValue', 'book']);
 
@@ -60,6 +61,9 @@ function check() {
 }
 
 async function book() {
+    // the rental details above must be complete first (the checkout opens and marks them)
+    if (props.beforeBook && !props.beforeBook()) return;
+
     const found = check();
     Object.keys(errors).forEach((k) => delete errors[k]);
     Object.assign(errors, found);

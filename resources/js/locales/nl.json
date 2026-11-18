@@ -515,6 +515,10 @@
       "small": "{count} klein"
     },
     "change": "Wijzigen",
-    "hide": "Verberg"
+    "hide": "Verberg",
+    "incompleteTitle": "Vul eerst je huurgegevens in.",
+    "incompleteText": "Kies ophaal- en retourlocatie, de datums en de tijden om de prijs te zien.",
+    "stillNeeded": "Nog nodig:",
+    "incompleteBook": "Vul eerst de huurgegevens bovenaan volledig in (locaties, datums en tijden) voordat je kunt boeken."
   }
 }

@@ -515,6 +515,10 @@
       "small": "{count} small"
     },
     "change": "Change",
-    "hide": "Hide"
+    "hide": "Hide",
+    "incompleteTitle": "Fill in your rental details first.",
+    "incompleteText": "Choose the pick-up and return locations, the dates and the times to see the price.",
+    "stillNeeded": "Still needed:",
+    "incompleteBook": "First complete the rental details at the top (locations, dates and times) before you can book."
   }
 }

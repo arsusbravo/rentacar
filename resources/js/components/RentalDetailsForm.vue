@@ -153,6 +153,25 @@ onMounted(async () => {
     if (props.collapsible && complete.value) folded.value = true;
 });
 
+// What is still missing, for the alert on the checkout (and the red fields after a failed "Book").
+const showMissing = ref(false);
+const missing = computed(() => [
+    [pickupBranchId.value, 'checkout.pickupLocation'], [pickupDate.value, 'checkout.pickupDate'], [pickupTime.value, 'checkout.pickupTime'],
+    [returnBranchId.value, 'checkout.dropLocation'], [returnDate.value, 'checkout.returnDate'], [returnTime.value, 'checkout.returnTime'],
+].filter(([v]) => !v).map(([, key]) => t(key)));
+const flag = (v) => (showMissing.value && !v ? 'border-red-400 ring-1 ring-red-300' : '');
+
+/** For the checkout's "Book": true when complete; otherwise opens the form and marks what is missing. */
+function check() {
+    showMissing.value = !complete.value;
+    if (!complete.value) {
+        folded.value = false;
+        nextTick(() => document.getElementById('rental-details')?.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+    }
+    return complete.value;
+}
+defineExpose({ check });
+
 const complete = computed(() => !!(pickupBranchId.value && returnBranchId.value && pickupDate.value && pickupTime.value && returnDate.value && returnTime.value));
 const collapsed = computed(() => props.collapsible && complete.value && folded.value);
 
@@ -172,6 +191,17 @@ async function submit() {
     errors.value = {};
     emit('validated', null);
 
+    // Homepage: no validation, hand over whatever is filled in; the vehicles page takes it from there.
+    if (props.redirectTo) {
+        const query = new URLSearchParams(Object.entries({
+            category: categorySlug.value, pickup: pickupBranchId.value, return: returnBranchId.value,
+            pickup_date: pickupDate.value, pickup_time: pickupTime.value,
+            return_date: returnDate.value, return_time: returnTime.value,
+        }).filter(([, v]) => v).map(([k, v]) => [k, String(v)])).toString();
+        window.location.assign(query ? `${props.redirectTo}?${query}` : props.redirectTo);
+        return;
+    }
+
     if (props.categories.length && !categorySlug.value) {
         errors.value = { category: [t('checkout.categoryRequired')] };
         return;
@@ -188,16 +218,6 @@ async function submit() {
             return_date: returnDate.value,
             return_time: returnTime.value || null,
         });
-        if (props.redirectTo) {
-            const query = new URLSearchParams({
-                ...(categorySlug.value ? { category: categorySlug.value } : {}),
-                pickup: pickupBranchId.value, return: returnBranchId.value,
-                pickup_date: pickupDate.value, pickup_time: pickupTime.value,
-                return_date: returnDate.value, return_time: returnTime.value,
-            });
-            window.location.assign(`${props.redirectTo}?${query}`);
-            return;
-        }
         emit('validated', {
             pickupBranch: pickupBranch.value,
             returnBranch: props.branches.find((b) => b.id === returnBranchId.value),
@@ -230,7 +250,7 @@ const dpTime = { enableTimePicker: false };
 </script>
 
 <template>
-    <form :class="[formClass, 'text-left text-brand-950']" novalidate @submit.prevent="submit">
+    <form id="rental-details" :class="[formClass, 'text-left text-brand-950']" novalidate @submit.prevent="submit">
         <!-- Phone: a one-line summary instead of the whole form; tap to change -->
         <button v-if="collapsible && complete" type="button" :aria-expanded="!collapsed" aria-controls="rental-fields"
                 class="flex w-full items-center justify-between gap-3 text-left lg:hidden" :class="collapsed ? '' : 'mb-3 border-b border-slate-100 pb-3'" @click="folded = !folded">
@@ -256,7 +276,7 @@ const dpTime = { enableTimePicker: false };
             <fieldset :class="bar ? barGroup : 'space-y-2.5'">
                 <legend :class="short ? 'sr-only' : 'mb-1 text-base font-semibold'">{{ t('checkout.pickup') }}</legend>
                 <label :class="bar ? 'col-span-2 block text-xs font-medium text-slate-500 sm:col-span-1' : 'block text-xs font-medium text-slate-500'">{{ t('checkout.pickupLocation') }}
-                    <select v-model="pickupBranchId" :class="field">
+                    <select v-model="pickupBranchId" :class="[field, flag(pickupBranchId)]">
                         <option value="">{{ t('checkout.chooseBranch') }}</option>
                         <option v-for="b in branches" :key="b.id" :value="b.id">{{ branchLabel(b) }}</option>
                     </select>
@@ -269,7 +289,7 @@ const dpTime = { enableTimePicker: false };
                                        :placeholder="t('checkout.selectDate')" />
                     </div>
                     <label class="block text-xs font-medium text-slate-500">{{ short ? t('checkout.pickupTime') : t('checkout.time') }}
-                        <select v-model="pickupTime" :class="field" :disabled="!pickupDate">
+                        <select v-model="pickupTime" :class="[field, flag(pickupTime)]" :disabled="!pickupDate">
                             <option value="">--:--</option>
                             <option v-for="s in pickupSlots" :key="s" :value="s">{{ s }}</option>
                         </select>
@@ -280,7 +300,7 @@ const dpTime = { enableTimePicker: false };
             <fieldset :class="bar ? barGroup : compact ? 'space-y-2.5 pt-1' : 'space-y-2.5'">
                 <legend :class="short ? 'sr-only' : 'mb-1 text-base font-semibold'">{{ t('checkout.return') }}</legend>
                 <label :class="bar ? 'col-span-2 block text-xs font-medium text-slate-500 sm:col-span-1' : 'block text-xs font-medium text-slate-500'">{{ t('checkout.dropLocation') }}
-                    <select v-model="returnBranchId" :class="field" @change="returnBranchTouched = true">
+                    <select v-model="returnBranchId" :class="[field, flag(returnBranchId)]" @change="returnBranchTouched = true">
                         <option value="">{{ t('checkout.chooseBranch') }}</option>
                         <option v-for="b in branches" :key="b.id" :value="b.id">{{ branchLabel(b) }}</option>
                     </select>
@@ -293,7 +313,7 @@ const dpTime = { enableTimePicker: false };
                                        :placeholder="t('checkout.selectDate')" />
                     </div>
                     <label class="block text-xs font-medium text-slate-500">{{ short ? t('checkout.returnTime') : t('checkout.time') }}
-                        <select v-model="returnTime" :class="field" :disabled="!returnDate">
+                        <select v-model="returnTime" :class="[field, flag(returnTime)]" :disabled="!returnDate">
                             <option value="">--:--</option>
                             <option v-for="s in returnSlots" :key="s" :value="s">{{ s }}</option>
                         </select>
@@ -303,6 +323,13 @@ const dpTime = { enableTimePicker: false };
         </div>
 
         <p v-if="!compact && !bar" class="mt-4 text-xs text-slate-500">{{ t('checkout.hoursHint') }}</p>
+
+        <!-- Checkout: without all details there is no price -->
+        <p v-if="update && !complete" role="alert" class="mt-3 rounded-lg border px-3 py-2 text-sm lg:col-span-2" :class="showMissing ? 'border-red-300 bg-red-50 text-red-800' : 'border-amber-300 bg-amber-50 text-amber-900'">
+            <strong class="font-semibold">{{ t('checkout.incompleteTitle') }}</strong>
+            {{ t('checkout.incompleteText') }}
+            <span class="mt-0.5 block text-xs opacity-80">{{ t('checkout.stillNeeded') }} {{ missing.join(', ') }}</span>
+        </p>
 
         <ul v-if="errorList.length" :class="bar ? 'mt-3 list-disc space-y-1 pl-5 text-xs text-red-600 lg:col-span-2 lg:row-start-3' : 'mt-3 list-disc space-y-1 pl-5 text-xs text-red-600'">
             <li v-for="(e, i) in errorList" :key="i">{{ e }}</li>
