@@ -25,6 +25,8 @@ const props = defineProps({
     autoSubmit: { type: Boolean, default: false },
     // Low, wide search bar (vehicles page): chips for the type, all fields in one row on large screens.
     bar: { type: Boolean, default: false },
+    // On a phone: fold the form into a one-line summary once everything is filled in (tap to change).
+    collapsible: { type: Boolean, default: false },
 });
 const emit = defineEmits(['validated', 'changed', 'query']);
 const { t, locale } = useI18n();
@@ -40,6 +42,7 @@ const returnDate = ref(null);
 const returnTime = ref('');
 const errors = ref({});
 const submitting = ref(false);
+const folded = ref(false); // collapsible: the form is folded into the summary row (phones only)
 
 // --- helpers --------------------------------------------------------------
 const pad = (n) => String(n).padStart(2, '0');
@@ -139,16 +142,30 @@ onMounted(async () => {
     returnDate.value = i.returnDate ?? null;
     returnTime.value = i.returnTime ?? '';
 
-    // A complete period is accepted straight away, so the checkout can show the price without a click.
-    // After the watchers had their say: they drop values that are not allowed (weekend, outside opening hours).
-    if (props.autoSubmit) {
-        await nextTick();
+    // After the watchers had their say: they fill the return location and drop values that are not allowed
+    // (weekend, outside opening hours).
+    await nextTick();
 
-        if (pickupBranchId.value && returnBranchId.value && pickupDate.value && pickupTime.value && returnDate.value && returnTime.value) {
-            submit();
-        }
-    }
+    // A complete period is accepted straight away, so the checkout can show the price without a click.
+    if (props.autoSubmit && complete.value) submit();
+
+    // A form that arrives complete (prefilled) starts folded on a phone.
+    if (props.collapsible && complete.value) folded.value = true;
 });
+
+const complete = computed(() => !!(pickupBranchId.value && returnBranchId.value && pickupDate.value && pickupTime.value && returnDate.value && returnTime.value));
+const collapsed = computed(() => props.collapsible && complete.value && folded.value);
+
+// One-line summary of what is filled in: "Personenauto · Rentacar Den Haag" / "19-11 13:00 → 20-11 11:30"
+const shortDate = (d) => `${d.slice(8, 10)}-${d.slice(5, 7)}`;
+const summaryTitle = computed(() => {
+    const from = pickupBranch.value ? branchLabel(pickupBranch.value) : '';
+    const back = props.branches.find((b) => b.id === returnBranchId.value);
+    const place = back && back.id !== pickupBranch.value?.id ? `${from} → ${branchLabel(back)}` : from;
+    const category = props.categories.find((c) => c.slug === categorySlug.value)?.name;
+    return [category, place].filter(Boolean).join(' · ');
+});
+const summaryPeriod = computed(() => (complete.value ? `${shortDate(pickupDate.value)} ${pickupTime.value} → ${shortDate(returnDate.value)} ${returnTime.value}` : ''));
 
 // --- submit ---------------------------------------------------------------
 async function submit() {
@@ -187,6 +204,7 @@ async function submit() {
             pickupAt: `${pickupDate.value} ${pickupTime.value}`,
             returnAt: `${returnDate.value} ${returnTime.value}`,
         });
+        folded.value = true; // accepted: fold the form away (phones)
     } catch (e) {
         if (e instanceof ApiError && e.status === 422) errors.value = e.errors;
         else throw e;
@@ -213,6 +231,20 @@ const dpTime = { enableTimePicker: false };
 
 <template>
     <form :class="[formClass, 'text-left text-brand-950']" novalidate @submit.prevent="submit">
+        <!-- Phone: a one-line summary instead of the whole form; tap to change -->
+        <button v-if="collapsible && complete" type="button" :aria-expanded="!collapsed" aria-controls="rental-fields"
+                class="flex w-full items-center justify-between gap-3 text-left lg:hidden" :class="collapsed ? '' : 'mb-3 border-b border-slate-100 pb-3'" @click="folded = !folded">
+            <span class="min-w-0">
+                <span class="block truncate text-sm font-semibold text-slate-900">{{ summaryTitle }}</span>
+                <span class="block truncate text-xs text-slate-500">{{ summaryPeriod }}</span>
+            </span>
+            <span class="flex shrink-0 items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-brand-700 ring-1 ring-slate-200">
+                {{ collapsed ? t('checkout.change') : t('checkout.hide') }}
+                <svg class="size-3.5 transition" :class="collapsed ? '' : 'rotate-180'" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 8 5 5 5-5" /></svg>
+            </span>
+        </button>
+
+        <div id="rental-fields" class="contents" :class="{ 'max-lg:hidden': collapsed }">
         <div v-if="categories.length" :class="bar ? 'mb-3 flex flex-wrap items-center gap-x-4 gap-y-2 lg:col-span-2' : compact ? 'mb-3' : 'mb-6'">
             <CategoryPicker v-model="categorySlug" :categories="categories" :size="pickerSize" />
             <!-- the opening-hours note as a tooltip, to keep the bar low -->
@@ -281,6 +313,7 @@ const dpTime = { enableTimePicker: false };
             {{ search ? t('checkout.search') : update ? t('checkout.update') : t('checkout.continue') }}
         </button>
         <p v-if="compact" class="mt-2 text-[11px] leading-snug text-slate-500">{{ t('checkout.hoursHint') }}</p>
+        </div>
     </form>
 </template>
 

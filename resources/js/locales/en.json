@@ -505,6 +505,8 @@
       "license": "Driving licence",
       "large": "{count} large",
       "small": "{count} small"
-    }
+    },
+    "change": "Change",
+    "hide": "Hide"
   }
 }

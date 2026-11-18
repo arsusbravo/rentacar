@@ -202,9 +202,9 @@ const specs = computed(() => {
 <template>
     <h1 class="text-2xl font-semibold">{{ t('checkout.title') }}</h1>
 
-    <div class="mt-6 grid items-start gap-6 lg:grid-cols-[1fr_22rem]">
+    <div class="mt-6 grid items-start gap-6 max-lg:pb-20 lg:grid-cols-[1fr_22rem]">
         <div class="space-y-6">
-            <RentalDetailsForm :branches="branches" :initial="initial" update auto-submit @validated="onValidated" @changed="onChanged" />
+            <RentalDetailsForm :branches="branches" :initial="initial" update auto-submit collapsible @validated="onValidated" @changed="onChanged" />
 
             <!-- Fuel, transmission, kilometres and own risk: one compact card, a row each -->
             <section class="rounded-xl bg-white px-5 py-2 shadow-sm ring-1 ring-slate-200" aria-labelledby="build-title">
@@ -361,7 +361,7 @@ const specs = computed(() => {
             </div>
 
             <!-- Totals: only when everything can be calculated; sticks to the bottom of the screen while the overview scrolls -->
-            <div v-if="quote" class="sticky bottom-0 bg-white/95 px-5 py-4 shadow-[0_-6px_12px_-6px_rgba(15,23,42,0.12)] backdrop-blur transition-opacity" :class="{ 'opacity-60': quoting }" aria-live="polite">
+            <div v-if="quote" id="overview-totals" class="bg-white/95 px-5 py-4 lg:sticky lg:bottom-0 shadow-[0_-6px_12px_-6px_rgba(15,23,42,0.12)] backdrop-blur transition-opacity" :class="{ 'opacity-60': quoting }" aria-live="polite">
                 <dl class="space-y-1 text-sm">
                     <div class="flex justify-between gap-3"><dt class="text-slate-600">{{ t('checkout.price.totalExcl') }}</dt><dd class="font-medium tabular-nums">{{ formatCents(quote.subtotal_cents, locale) }}</dd></div>
                     <div class="flex justify-between gap-3 text-xs text-slate-500"><dt>{{ t('checkout.price.vat', { rate: quote.vat_rate }) }}</dt><dd class="tabular-nums">{{ formatCents(quote.vat_cents, locale) }}</dd></div>
@@ -376,6 +376,17 @@ const specs = computed(() => {
             </div>
         </aside>
     </div>
+
+    <!-- Phone: the total flies in at the bottom of the screen as soon as it is known -->
+    <Transition enter-active-class="transition duration-300 ease-out" enter-from-class="translate-y-full opacity-0" leave-active-class="transition duration-200 ease-in" leave-to-class="translate-y-full opacity-0">
+        <a v-if="quote" href="#overview-totals" class="fixed inset-x-0 bottom-0 z-30 flex items-center justify-between gap-3 border-t border-slate-200 bg-white/95 px-4 py-3 shadow-[0_-6px_16px_-6px_rgba(15,23,42,0.2)] backdrop-blur lg:hidden" :class="{ 'opacity-70': quoting }" aria-live="polite">
+            <span>
+                <span class="block text-xs text-slate-500">{{ t('checkout.price.totalIncl') }}</span>
+                <span v-if="quote.deposit.applicable" class="block text-[11px] text-slate-400">{{ t('checkout.price.deposit') }} {{ formatCents(quote.deposit.cents, locale) }}</span>
+            </span>
+            <span class="text-xl font-bold tabular-nums text-brand-800">{{ formatCents(quote.total_cents, locale) }}</span>
+        </a>
+    </Transition>
 
     <OrderPreviewModal v-if="order" :order="order" @close="order = null" />
 </template>

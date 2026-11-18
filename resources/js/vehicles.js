@@ -26,5 +26,6 @@ createApp(RentalDetailsForm, {
     redirectTo: el.dataset.vehiclesUrl, // searching again reloads this page with the new choices
     search: true,
     bar: true, // low search bar: the vehicles are the main content of this page
+    collapsible: true, // a phone folds it into a summary once everything is filled in
     onQuery: syncSelectLinks,
 }).use(i18n).mount(el);

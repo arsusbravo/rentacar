@@ -505,6 +505,8 @@
       "license": "Rijbewijs",
       "large": "{count} groot",
       "small": "{count} klein"
-    }
+    },
+    "change": "Wijzigen",
+    "hide": "Verberg"
   }
 }
