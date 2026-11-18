@@ -47,7 +47,7 @@
 setTimeout(function () {
     try {
         if (navigator.webdriver || document.visibilityState === 'hidden') return;
-        fetch('{{ route('visit', [], false) }}', {
+        fetch('/t', {
             method: 'POST', keepalive: true, credentials: 'same-origin',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
             body: JSON.stringify({ p: location.pathname, r: document.referrer, c: new URLSearchParams(location.search).get('visits') }),
