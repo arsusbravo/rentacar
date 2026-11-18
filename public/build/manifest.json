@@ -1,20 +1,20 @@
 {
-  "_ConfirmBookingDialog-CDfD7eFg.js": {
-    "file": "assets/ConfirmBookingDialog-CDfD7eFg.js",
+  "_ConfirmBookingDialog-BymKOKwu.js": {
+    "file": "assets/ConfirmBookingDialog-BymKOKwu.js",
     "name": "ConfirmBookingDialog",
     "imports": [
-      "_i18n-MW9xyF9F.js"
+      "_i18n-DNCvyomp.js"
     ]
   },
   "_RentalDetailsForm-8jM32ZOX.css": {
     "file": "assets/RentalDetailsForm-8jM32ZOX.css",
     "src": "_RentalDetailsForm-8jM32ZOX.css"
   },
-  "_RentalDetailsForm-DdZYK1zK.js": {
-    "file": "assets/RentalDetailsForm-DdZYK1zK.js",
+  "_RentalDetailsForm-vMKGBl9d.js": {
+    "file": "assets/RentalDetailsForm-vMKGBl9d.js",
     "name": "RentalDetailsForm",
     "imports": [
-      "_i18n-MW9xyF9F.js"
+      "_i18n-DNCvyomp.js"
     ],
     "css": [
       "assets/RentalDetailsForm-8jM32ZOX.css"
@@ -24,8 +24,8 @@
     "file": "assets/fonts-C9MNnjVw.css",
     "src": "_fonts-C9MNnjVw.css"
   },
-  "_i18n-MW9xyF9F.js": {
-    "file": "assets/i18n-MW9xyF9F.js",
+  "_i18n-DNCvyomp.js": {
+    "file": "assets/i18n-DNCvyomp.js",
     "name": "i18n"
   },
   "_instrument-sans-400-normal-D1W7dsQl.woff": {
@@ -57,7 +57,7 @@
     "name": "money"
   },
   "resources/css/app.css": {
-    "file": "assets/app-dplxI4vW.css",
+    "file": "assets/app-B8RcPrY1.css",
     "name": "app",
     "names": [
       "app.css"
@@ -66,12 +66,12 @@
     "isEntry": true
   },
   "resources/js/admin.js": {
-    "file": "assets/admin-CXEgMnbY.js",
+    "file": "assets/admin-vPZQ5nFf.js",
     "name": "admin",
     "src": "resources/js/admin.js",
     "isEntry": true,
     "imports": [
-      "_i18n-MW9xyF9F.js"
+      "_i18n-DNCvyomp.js"
     ],
     "dynamicImports": [
       "resources/js/pages/admin/Dashboard.vue",
@@ -87,156 +87,156 @@
       "resources/js/pages/admin/Branches.vue"
     ],
     "css": [
-      "assets/app-dplxI4vW.css"
+      "assets/app-B8RcPrY1.css"
     ]
   },
   "resources/js/checkout.js": {
-    "file": "assets/checkout-BaksvLxI.js",
+    "file": "assets/checkout-Dn28KOmY.js",
     "name": "checkout",
     "src": "resources/js/checkout.js",
     "isEntry": true,
     "imports": [
-      "_i18n-MW9xyF9F.js",
+      "_i18n-DNCvyomp.js",
       "_money-Bf6Mf4MI.js",
-      "_RentalDetailsForm-DdZYK1zK.js"
+      "_RentalDetailsForm-vMKGBl9d.js"
     ],
     "css": [
-      "assets/app-dplxI4vW.css"
+      "assets/app-B8RcPrY1.css"
     ]
   },
   "resources/js/home.js": {
-    "file": "assets/home-BwicE84J.js",
+    "file": "assets/home-DNUQ4czD.js",
     "name": "home",
     "src": "resources/js/home.js",
     "isEntry": true,
     "imports": [
-      "_i18n-MW9xyF9F.js",
-      "_RentalDetailsForm-DdZYK1zK.js"
+      "_i18n-DNCvyomp.js",
+      "_RentalDetailsForm-vMKGBl9d.js"
     ],
     "css": [
-      "assets/app-dplxI4vW.css"
+      "assets/app-B8RcPrY1.css"
     ]
   },
   "resources/js/pages/admin/Bookings.vue": {
-    "file": "assets/Bookings-Cs1GmFco.js",
+    "file": "assets/Bookings-ChHOhvX9.js",
     "name": "Bookings",
     "src": "resources/js/pages/admin/Bookings.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_i18n-MW9xyF9F.js",
+      "_i18n-DNCvyomp.js",
       "resources/js/admin.js",
       "_money-Bf6Mf4MI.js",
-      "_ConfirmBookingDialog-CDfD7eFg.js"
+      "_ConfirmBookingDialog-BymKOKwu.js"
     ]
   },
   "resources/js/pages/admin/Branches.vue": {
-    "file": "assets/Branches-DlmyiBZP.js",
+    "file": "assets/Branches-tLDci8Kl.js",
     "name": "Branches",
     "src": "resources/js/pages/admin/Branches.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_i18n-MW9xyF9F.js"
+      "_i18n-DNCvyomp.js"
     ]
   },
   "resources/js/pages/admin/Categories.vue": {
-    "file": "assets/Categories-DCkHsD5Y.js",
+    "file": "assets/Categories-C-RoXpys.js",
     "name": "Categories",
     "src": "resources/js/pages/admin/Categories.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_i18n-MW9xyF9F.js"
+      "_i18n-DNCvyomp.js"
     ]
   },
   "resources/js/pages/admin/Classes.vue": {
-    "file": "assets/Classes-JJwe4VfU.js",
+    "file": "assets/Classes-C5Yd-URh.js",
     "name": "Classes",
     "src": "resources/js/pages/admin/Classes.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_i18n-MW9xyF9F.js"
+      "_i18n-DNCvyomp.js"
     ]
   },
   "resources/js/pages/admin/Customers.vue": {
-    "file": "assets/Customers-DnxV5GLd.js",
+    "file": "assets/Customers-Ci_GqBFt.js",
     "name": "Customers",
     "src": "resources/js/pages/admin/Customers.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_i18n-MW9xyF9F.js",
+      "_i18n-DNCvyomp.js",
       "resources/js/admin.js"
     ]
   },
   "resources/js/pages/admin/Dashboard.vue": {
-    "file": "assets/Dashboard-C_Hzd2fV.js",
+    "file": "assets/Dashboard-BJEdjkpG.js",
     "name": "Dashboard",
     "src": "resources/js/pages/admin/Dashboard.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_i18n-MW9xyF9F.js",
+      "_i18n-DNCvyomp.js",
       "_money-Bf6Mf4MI.js",
-      "_ConfirmBookingDialog-CDfD7eFg.js"
+      "_ConfirmBookingDialog-BymKOKwu.js"
     ]
   },
   "resources/js/pages/admin/Extras.vue": {
-    "file": "assets/Extras-DRPqSAHC.js",
+    "file": "assets/Extras-DmlYO1R7.js",
     "name": "Extras",
     "src": "resources/js/pages/admin/Extras.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_i18n-MW9xyF9F.js",
+      "_i18n-DNCvyomp.js",
       "_money-Bf6Mf4MI.js"
     ]
   },
   "resources/js/pages/admin/Prices.vue": {
-    "file": "assets/Prices-CogQ6VrP.js",
+    "file": "assets/Prices-DrFHAlpo.js",
     "name": "Prices",
     "src": "resources/js/pages/admin/Prices.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_i18n-MW9xyF9F.js",
+      "_i18n-DNCvyomp.js",
       "_money-Bf6Mf4MI.js"
     ]
   },
   "resources/js/pages/admin/Profile.vue": {
-    "file": "assets/Profile-C4UkdKZG.js",
+    "file": "assets/Profile-DIUKV8yJ.js",
     "name": "Profile",
     "src": "resources/js/pages/admin/Profile.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_i18n-MW9xyF9F.js"
+      "_i18n-DNCvyomp.js"
     ]
   },
   "resources/js/pages/admin/Users.vue": {
-    "file": "assets/Users-C2xyQKpv.js",
+    "file": "assets/Users-CTnOerNm.js",
     "name": "Users",
     "src": "resources/js/pages/admin/Users.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_i18n-MW9xyF9F.js",
+      "_i18n-DNCvyomp.js",
       "resources/js/admin.js"
     ]
   },
   "resources/js/pages/admin/Visitors.vue": {
-    "file": "assets/Visitors-DqmCJbEE.js",
+    "file": "assets/Visitors-D3aKG_Bq.js",
     "name": "Visitors",
     "src": "resources/js/pages/admin/Visitors.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_i18n-MW9xyF9F.js",
+      "_i18n-DNCvyomp.js",
       "resources/js/admin.js"
     ]
   },
   "resources/js/vehicles.js": {
-    "file": "assets/vehicles-AKl1aZGR.js",
+    "file": "assets/vehicles-KAPJ1A8w.js",
     "name": "vehicles",
     "src": "resources/js/vehicles.js",
     "isEntry": true,
     "imports": [
-      "_i18n-MW9xyF9F.js",
-      "_RentalDetailsForm-DdZYK1zK.js"
+      "_i18n-DNCvyomp.js",
+      "_RentalDetailsForm-vMKGBl9d.js"
     ],
     "css": [
-      "assets/app-dplxI4vW.css"
+      "assets/app-B8RcPrY1.css"
     ]
   }
 }

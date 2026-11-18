@@ -492,6 +492,19 @@
       "noteIncluded": "Inbegrepen: {total} km.",
       "noteWithExtra": "Inbegrepen: {included} km + {extra} km bijgeboekt = {total} km.",
       "beyond": "Elke gereden kilometer daarboven wordt na het terugbrengen afgerekend tegen {price} per km (excl. BTW)."
+    },
+    "specsSubtitle": "Kies de brandstof en de versnellingsbak.",
+    "specifications": "Specificaties",
+    "spec": {
+      "class": "Klasse",
+      "seats": "Zitplaatsen",
+      "doors": "Deuren",
+      "luggage": "Bagage",
+      "cargo": "Laadvolume",
+      "payload": "Laadvermogen",
+      "license": "Rijbewijs",
+      "large": "{count} groot",
+      "small": "{count} klein"
     }
   }
 }

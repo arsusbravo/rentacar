@@ -278,6 +278,10 @@ class VehicleClass extends Model
             'default_transmission' => $this->defaultTransmission(),
             'priced' => $this->fromDayPriceCents() !== null,
             'km_included' => (int) $this->km_included,
+            'seats' => $this->seats, 'doors' => $this->doors,
+            'baggage_large' => $this->baggage_large, 'baggage_small' => $this->baggage_small,
+            'cargo_volume_liters' => $this->cargo_volume_liters, 'payload_kg' => $this->payload_kg,
+            'license_category' => $this->license_category,
             'km_extra_max' => (int) config('pricing.km.max_extra'),
             // own risk (excluding VAT) and, when offered, what lowering it costs per rental day
             'own_risk' => $this->ownRiskCents() === null ? null : $this->ownRiskCents() / 100,

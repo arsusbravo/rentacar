@@ -182,6 +182,21 @@ async function book() {
 const unitCount = (unit, count) => t(`checkout.price.units.${unit}`, { count }, count);
 const breakdownText = computed(() => (quote.value ? quote.value.rental.breakdown.map((b) => unitCount(b.unit, b.count)).join(' + ') : ''));
 const ownRiskReduction = props.vehicleClass.own_risk_reduction;
+
+// Specifications under the vehicle (fuel, transmission and km are chosen on the left, so they are not repeated).
+const specs = computed(() => {
+    const c = props.vehicleClass;
+    const luggage = [c.baggage_large ? t('checkout.spec.large', { count: c.baggage_large }) : null, c.baggage_small ? t('checkout.spec.small', { count: c.baggage_small }) : null].filter(Boolean).join(' + ');
+    return [
+        { label: t('checkout.spec.class'), value: c.name, wide: true },
+        c.seats ? { label: t('checkout.spec.seats'), value: c.seats } : null,
+        c.doors ? { label: t('checkout.spec.doors'), value: c.doors } : null,
+        luggage ? { label: t('checkout.spec.luggage'), value: luggage, wide: true } : null,
+        c.cargo_volume_liters ? { label: t('checkout.spec.cargo'), value: `${c.cargo_volume_liters.toLocaleString(locale.value === 'nl' ? 'nl-NL' : 'en-GB')} L` } : null,
+        c.payload_kg ? { label: t('checkout.spec.payload'), value: `${c.payload_kg.toLocaleString(locale.value === 'nl' ? 'nl-NL' : 'en-GB')} kg` } : null,
+        c.license_category ? { label: t('checkout.spec.license'), value: c.license_category } : null,
+    ].filter(Boolean);
+});
 </script>
 
 <template>
@@ -190,10 +205,79 @@ const ownRiskReduction = props.vehicleClass.own_risk_reduction;
     <div class="mt-6 grid items-start gap-6 lg:grid-cols-[1fr_22rem]">
         <div class="space-y-6">
             <RentalDetailsForm :branches="branches" :initial="initial" update auto-submit @validated="onValidated" @changed="onChanged" />
+
+            <!-- Fuel, transmission, kilometres and own risk: one compact card, a row each -->
+            <section class="rounded-xl bg-white px-5 py-2 shadow-sm ring-1 ring-slate-200" aria-labelledby="build-title">
+                <h2 id="build-title" class="sr-only">{{ t('checkout.specs') }}</h2>
+                <div class="divide-y divide-slate-100 text-sm">
+                    <!-- Fuel -->
+                    <fieldset class="grid items-center gap-x-4 gap-y-1.5 py-3 sm:grid-cols-[8.5rem_1fr]">
+                        <legend class="float-left font-medium text-slate-700 sm:float-none sm:contents"><span class="sm:col-start-1">{{ t('checkout.fuel') }}</span></legend>
+                        <span v-if="vehicleClass.fuel_types.length === 1" class="font-medium">{{ vehicleClass.fuel_types[0].label }}</span>
+                        <div v-else class="flex flex-wrap gap-2">
+                            <label v-for="o in vehicleClass.fuel_types" :key="o.value"
+                                   class="cursor-pointer rounded-lg px-3.5 py-1.5 font-medium ring-1 ring-slate-300 transition hover:ring-brand-400 has-checked:bg-brand-700 has-checked:text-white has-checked:ring-brand-700">
+                                <input v-model="fuel" type="radio" name="fuel" :value="o.value" class="sr-only" @change="choiceMissing = false">
+                                {{ o.label }}
+                            </label>
+                        </div>
+                    </fieldset>
+
+                    <!-- Transmission: the default, or a tick for the alternative -->
+                    <fieldset class="grid items-center gap-x-4 gap-y-1.5 py-3 sm:grid-cols-[8.5rem_1fr]">
+                        <legend class="float-left font-medium text-slate-700 sm:float-none sm:contents"><span class="sm:col-start-1">{{ t('checkout.transmission') }}</span></legend>
+                        <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+                            <span class="font-medium">{{ label(vehicleClass.transmissions, transmission) }}</span>
+                            <label v-for="o in alternativeTransmissions" :key="o.value"
+                                   class="flex cursor-pointer items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs ring-1 transition"
+                                   :class="transmission === o.value ? 'bg-brand-700 text-white ring-brand-700' : 'bg-brand-50 text-brand-900 ring-brand-200 hover:bg-brand-100 hover:ring-brand-400'">
+                                <input type="checkbox" class="size-4 shrink-0 cursor-pointer rounded border-brand-300 accent-brand-700" :checked="transmission === o.value" @change="toggleTransmission(o.value, $event.target.checked)">
+                                <span><strong class="font-semibold">{{ o.label }}</strong> <span class="opacity-70">{{ t('checkout.transmissionInstead', { name: label(vehicleClass.transmissions, vehicleClass.default_transmission) }) }}</span></span>
+                            </label>
+                        </div>
+                    </fieldset>
+                    <p v-if="choiceMissing" class="py-2 text-sm text-red-600">{{ t('checkout.choiceRequired') }}</p>
+
+                    <!-- Kilometres -->
+                    <div class="grid items-start gap-x-4 gap-y-1.5 py-3 sm:grid-cols-[8.5rem_1fr]">
+                        <p class="font-medium text-slate-700">{{ t('checkout.km.title') }}</p>
+                        <div>
+                            <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+                                <span class="font-medium">{{ vehicleClass.km_included > 0 ? t('checkout.km.included', { km: vehicleClass.km_included }) : t('checkout.km.noneIncluded') }}</span>
+                                <template v-if="!kmUnavailable">
+                                    <label for="extra-km" class="text-slate-500">{{ t('checkout.km.extraLabel') }}</label>
+                                    <div class="relative w-28">
+                                        <input id="extra-km" type="text" inputmode="numeric" autocomplete="off" placeholder="0" :value="extraKm" aria-describedby="extra-km-hint"
+                                               class="w-full rounded-lg border border-slate-300 bg-white py-1.5 pl-3 pr-9 focus:border-brand-500 focus:outline-hidden focus:ring-2 focus:ring-brand-200" @input="onExtraKm">
+                                        <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">km</span>
+                                    </div>
+                                    <span v-if="quote && quote.km.price_cents !== null" class="whitespace-nowrap text-xs text-slate-500">× {{ formatCents(quote.km.price_cents, locale) }} {{ t('checkout.km.perKm') }}</span>
+                                </template>
+                            </div>
+                            <p v-if="!kmUnavailable" id="extra-km-hint" class="mt-1.5 text-xs text-slate-500">{{ t('checkout.km.extraHint', { km: vehicleClass.km_included }) }}</p>
+                            <p v-else class="mt-1.5 text-xs text-slate-500">{{ t('checkout.km.unavailable') }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Own risk, and lowering it -->
+                    <div v-if="vehicleClass.own_risk !== null" class="grid items-center gap-x-4 gap-y-1.5 py-3 sm:grid-cols-[8.5rem_1fr]">
+                        <p class="font-medium text-slate-700">{{ t('checkout.price.ownRisk') }}</p>
+                        <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+                            <span class="font-medium">{{ formatMoney(vehicleClass.own_risk, locale) }} <span class="text-xs font-normal text-slate-400">{{ t('checkout.price.exclVat') }}</span></span>
+                            <label v-if="ownRiskReduction" class="flex cursor-pointer items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs ring-1 transition" :class="reduceOwnRisk ? 'bg-brand-700 text-white ring-brand-700' : 'bg-brand-50 text-brand-900 ring-brand-200 hover:bg-brand-100 hover:ring-brand-400'">
+                                <input v-model="reduceOwnRisk" type="checkbox" class="size-4 shrink-0 cursor-pointer rounded border-brand-300 accent-brand-700">
+                                <span>{{ t('checkout.price.reduce', { reduced: formatMoney(ownRiskReduction.reduced, locale), price: formatMoney(ownRiskReduction.price_per_day, locale) }) }}</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <ExtrasPicker v-model="selectedExtras" :extras="extras" />
             <ClientForm v-model="client" :server-errors="fieldErrors" :messages="bookingMessages" :min-age="minAge" :pickup-date="period ? period.pickupAt.slice(0, 10) : null" :busy="booking" @book="book" />
         </div>
 
+        <!-- Right: the vehicle and the prices only -->
         <aside class="overflow-clip rounded-xl bg-white shadow-sm ring-1 ring-slate-200 divide-y divide-slate-100">
             <!-- The selected vehicle -->
             <div class="p-5">
@@ -206,74 +290,18 @@ const ownRiskReduction = props.vehicleClass.own_risk_reduction;
                     <p class="mt-0.5 text-sm text-slate-500">{{ vehicleClass.category_name }} · {{ vehicleClass.name }}</p>
                     <a :href="vehiclesUrl" class="mt-3 inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-medium text-brand-700 ring-1 ring-slate-200 transition hover:bg-brand-50 hover:ring-brand-300">{{ t('checkout.changeVehicle') }}</a>
                 </div>
-            </div>
 
-            <!-- Specification: fuel and transmission -->
-            <div class="space-y-4 p-5">
-                <h2 class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">{{ t('checkout.specs') }}</h2>
-
-                <fieldset>
-                    <div class="flex items-center justify-between gap-3 text-sm">
-                        <legend class="float-left text-slate-500">{{ t('checkout.fuel') }}</legend>
-                        <span v-if="vehicleClass.fuel_types.length === 1" class="font-medium text-slate-900">{{ vehicleClass.fuel_types[0].label }}</span>
-                    </div>
-                    <div v-if="vehicleClass.fuel_types.length > 1" class="mt-2 flex flex-wrap gap-2">
-                        <label v-for="o in vehicleClass.fuel_types" :key="o.value"
-                               class="cursor-pointer rounded-lg px-3 py-1.5 text-sm ring-1 ring-slate-300 transition hover:ring-brand-400 has-checked:bg-brand-700 has-checked:text-white has-checked:ring-brand-700">
-                            <input v-model="fuel" type="radio" name="fuel" :value="o.value" class="sr-only" @change="choiceMissing = false">
-                            {{ o.label }}
-                        </label>
-                    </div>
-                </fieldset>
-
-                <fieldset>
-                    <div class="flex items-center justify-between gap-3 text-sm">
-                        <legend class="float-left text-slate-500">{{ t('checkout.transmission') }}</legend>
-                        <span class="font-medium text-slate-900">{{ label(vehicleClass.transmissions, transmission) }}</span>
-                    </div>
-                    <label v-for="o in alternativeTransmissions" :key="o.value"
-                           class="mt-2 flex cursor-pointer items-start gap-3 rounded-lg p-3 text-sm ring-1 transition"
-                           :class="transmission === o.value ? 'bg-brand-50 ring-brand-600' : 'ring-slate-200 hover:ring-brand-300'">
-                        <input type="checkbox" class="mt-0.5 size-4 shrink-0 rounded border-slate-300 accent-brand-700" :checked="transmission === o.value" @change="toggleTransmission(o.value, $event.target.checked)">
-                        <span class="font-medium text-slate-900">{{ o.label }}<span class="mt-0.5 block text-xs font-normal text-slate-500">{{ t('checkout.transmissionInstead', { name: label(vehicleClass.transmissions, vehicleClass.default_transmission) }) }}</span></span>
-                    </label>
-                </fieldset>
-                <p v-if="choiceMissing" class="text-sm text-red-600">{{ t('checkout.choiceRequired') }}</p>
-            </div>
-
-            <!-- Kilometres: a flat number is included, more can be booked (optional) -->
-            <fieldset class="p-5">
-                <div class="flex items-center justify-between gap-3">
-                    <legend class="float-left text-[11px] font-semibold uppercase tracking-wider text-slate-500">{{ t('checkout.km.title') }}</legend>
-                    <span class="text-sm font-medium text-slate-900">{{ vehicleClass.km_included > 0 ? t('checkout.km.included', { km: vehicleClass.km_included }) : t('checkout.km.noneIncluded') }}</span>
-                </div>
-
-                <div v-if="!kmUnavailable" class="mt-3 rounded-lg bg-slate-50 p-3">
-                    <label for="extra-km" class="block text-sm font-medium text-slate-700">{{ t('checkout.km.extraLabel') }}</label>
-                    <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2">
-                        <div class="relative w-32">
-                            <input id="extra-km" type="text" inputmode="numeric" autocomplete="off" placeholder="0" :value="extraKm" aria-describedby="extra-km-hint"
-                                   class="w-full rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-10 text-sm focus:border-brand-500 focus:outline-hidden focus:ring-2 focus:ring-brand-200" @input="onExtraKm">
-                            <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-slate-400">km</span>
+                <!-- Specifications, always visible -->
+                <div v-if="specs.length" class="mt-4">
+                    <h2 class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">{{ t('checkout.specifications') }}</h2>
+                    <dl class="mt-2 grid grid-flow-dense grid-cols-2 gap-2">
+                        <div v-for="sp in specs" :key="sp.label" class="rounded-lg bg-sky-50 px-3 py-2" :class="{ 'col-span-2': sp.wide }">
+                            <dt class="text-[11px] font-semibold uppercase tracking-wide text-sky-600">{{ sp.label }}</dt>
+                            <dd class="text-sm font-semibold text-sky-950">{{ sp.value }}</dd>
                         </div>
-                        <span v-if="quote && quote.km.price_cents !== null" class="whitespace-nowrap text-xs text-slate-500">× {{ formatCents(quote.km.price_cents, locale) }} {{ t('checkout.km.perKm') }}</span>
-                    </div>
-                    <p id="extra-km-hint" class="mt-2 text-xs leading-relaxed text-slate-500">{{ t('checkout.km.extraHint', { km: vehicleClass.km_included }) }}</p>
+                    </dl>
                 </div>
-                <p v-else class="mt-3 text-xs text-slate-500">{{ t('checkout.km.unavailable') }}</p>
-            </fieldset>
-
-            <!-- Own risk, and lowering it -->
-            <fieldset v-if="vehicleClass.own_risk !== null" class="p-5">
-                <div class="flex items-center justify-between gap-3">
-                    <legend class="float-left text-[11px] font-semibold uppercase tracking-wider text-slate-500">{{ t('checkout.price.ownRisk') }}</legend>
-                    <span class="text-sm font-medium text-slate-900">{{ formatMoney(vehicleClass.own_risk, locale) }} <span class="text-xs font-normal text-slate-400">{{ t('checkout.price.exclVat') }}</span></span>
-                </div>
-                <label v-if="ownRiskReduction" class="mt-3 flex cursor-pointer items-start gap-3 rounded-lg p-3 text-sm ring-1 transition" :class="reduceOwnRisk ? 'bg-brand-50 ring-brand-600' : 'ring-slate-200 hover:ring-brand-300'">
-                    <input v-model="reduceOwnRisk" type="checkbox" class="mt-0.5 size-4 shrink-0 rounded border-slate-300 accent-brand-700">
-                    <span class="text-slate-700">{{ t('checkout.price.reduce', { reduced: formatMoney(ownRiskReduction.reduced, locale), price: formatMoney(ownRiskReduction.price_per_day, locale) }) }}</span>
-                </label>
-            </fieldset>
+            </div>
 
             <!-- Reservation summary, once the period was accepted and the choices are made -->
             <div class="p-5">

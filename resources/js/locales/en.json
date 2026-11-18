@@ -492,6 +492,19 @@
       "noteIncluded": "Included: {total} km.",
       "noteWithExtra": "Included: {included} km + {extra} km booked = {total} km.",
       "beyond": "Every kilometre driven beyond that is settled after the return at {price} per km (excl. VAT)."
+    },
+    "specsSubtitle": "Choose the fuel and the transmission.",
+    "specifications": "Specifications",
+    "spec": {
+      "class": "Class",
+      "seats": "Seats",
+      "doors": "Doors",
+      "luggage": "Luggage",
+      "cargo": "Cargo volume",
+      "payload": "Payload",
+      "license": "Driving licence",
+      "large": "{count} large",
+      "small": "{count} small"
     }
   }
 }
