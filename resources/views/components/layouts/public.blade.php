@@ -41,5 +41,20 @@
         &copy; {{ date('Y') }} {{ config('app.name') }}
     </footer>
 </div>
+@if (config('visitors.enabled'))
+{{-- Counts the visit once the page has been open for a moment. Robots that only download the HTML never get here. --}}
+<script>
+setTimeout(function () {
+    try {
+        if (navigator.webdriver || document.visibilityState === 'hidden') return;
+        fetch('{{ route('visit', [], false) }}', {
+            method: 'POST', keepalive: true, credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+            body: JSON.stringify({ p: location.pathname, r: document.referrer, c: new URLSearchParams(location.search).get('visits') }),
+        });
+    } catch (e) {}
+}, 1500);
+</script>
+@endif
 </body>
 </html>

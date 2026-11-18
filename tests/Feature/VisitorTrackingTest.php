@@ -18,14 +18,19 @@ class VisitorTrackingTest extends TestCase
         return User::factory()->admin()->create(['email' => config('admin.hidden_emails')[0]]);
     }
 
-    private function visit(string $uri = '/', array $server = [], array $headers = [])
+    /** What the script on the page sends once a browser has had the page open for a moment. */
+    private function visit(string $uri = '/', array $server = [], array $headers = [], ?string $referrer = null)
     {
-        return $this->withHeaders($headers + ['User-Agent' => self::BROWSER])->withServerVariables($server)->get($uri);
+        $referrer ??= $headers['Referer'] ?? '';
+        parse_str((string) parse_url($uri, PHP_URL_QUERY), $query);
+
+        return $this->withHeaders($headers + ['User-Agent' => self::BROWSER])->withServerVariables($server)
+            ->postJson('/t', ['p' => parse_url($uri, PHP_URL_PATH), 'r' => $referrer, 'c' => $query['visits'] ?? null]);
     }
 
     public function test_a_public_page_view_is_counted_anonymously(): void
     {
-        $this->visit('/', [], ['Referer' => 'https://www.google.com/search?q=x'])->assertOk();
+        $this->visit('/', [], ['Referer' => 'https://www.google.com/search?q=x'])->assertNoContent();
 
         $v = PageVisit::sole();
         $this->assertSame('/', $v->path);
@@ -84,21 +89,27 @@ class VisitorTrackingTest extends TestCase
         $this->assertSame(1, PageVisit::count());
     }
 
-    public function test_logged_in_staff_robots_and_non_pages_are_not_counted(): void
+    public function test_robots_other_paths_and_staff_are_not_counted(): void
     {
         $this->visit('/', [], ['User-Agent' => 'Googlebot/2.1 (+http://www.google.com/bot.html)']);
+        $this->visit('/', [], ['User-Agent' => 'HeadlessChrome/120']);
         $this->visit('/', [], ['User-Agent' => '']);
-        $this->visit('/locale/en');
-        $this->visit('/up');
-        $this->visit('/does-not-exist')->assertNotFound();
-        $this->post('/', [], ['User-Agent' => self::BROWSER]);
-        $this->withHeaders(['User-Agent' => self::BROWSER, 'X-Requested-With' => 'XMLHttpRequest'])->get('/');
-        $this->withHeaders(['User-Agent' => self::BROWSER, 'Purpose' => 'prefetch'])->get('/');
+        $this->visit('/admin');
+        $this->visit('/login');
+        $this->visit('/does-not-exist');
+        $this->postJson('/t', ['p' => ['x']], ['User-Agent' => self::BROWSER]);
         $this->assertSame(0, PageVisit::count());
 
         $this->actingAs(User::factory()->admin()->create());
         $this->visit('/');
-        $this->visit('/admin');
+        $this->assertSame(0, PageVisit::count());
+    }
+
+    public function test_loading_the_html_alone_is_not_a_visit(): void
+    {
+        // a robot or mail scanner that downloads the page but never runs its script
+        $this->withHeaders(['User-Agent' => self::BROWSER])->get('/')->assertOk()->assertSee("fetch('/t'", false);
+
         $this->assertSame(0, PageVisit::count());
     }
 

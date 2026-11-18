@@ -12,6 +12,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RateController;
 use App\Http\Controllers\RentalPeriodController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VisitController;
 use App\Http\Controllers\VisitorController;
 use App\Http\Controllers\VehicleCategoryController;
 use App\Http\Controllers\VehicleClassController;
@@ -30,6 +31,9 @@ Route::get('/api/branches', [BranchController::class, 'publicIndex']);
 Route::post('/api/rental-period/validate', [RentalPeriodController::class, 'validate']);
 Route::post('/api/price-quote', QuoteController::class);
 Route::post('/api/order-preview', OrderPreviewController::class); // test: validates a checkout, books nothing
+
+// Visit counter: called by a script on the public pages (not by robots that only fetch the HTML)
+Route::post('/t', VisitController::class)->middleware('throttle:60,1')->name('visit');
 
 // Auth
 Route::middleware('guest')->group(function () {
